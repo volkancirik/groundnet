@@ -8,7 +8,7 @@ tar xvfz google_ref_val_images.tar.gz
 wget https://www.dropbox.com/s/ubq6azszr4pf1ax/google_ref_dev_images.tar.gz
 tar xvfz google_ref_dev_images.tar.gz
 
-wget https://www.dropbox.com/s/h1ifvkfqb6bf27z/stanford_cmn_refcocog_iou05.box%2Bmeta.h5
+wget https://www.dropbox.com/s/1i8g0064z0um53v/stanford_cmn_refcocog_iou05.box%2Bmeta%2Bsmax.h5
 wget https://www.dropbox.com/s/6er6ldklggmk7kb/stanford_cmn_refcocog_iou05.NOtriplets.pkl
 wget https://www.dropbox.com/s/6rh17exalgulmge/stanford_cmn_refcocog_iou05.triplets.pkl
 
