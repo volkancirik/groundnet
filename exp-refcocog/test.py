@@ -23,7 +23,7 @@ from models.get_model import get_model
 from util.arguments import get_main_args
 from collections import OrderedDict, defaultdict
 
-def evaluate(net, split, CNN, config, experiment_log, box_usage = 0, verbose = False, tst_json = [], out_file = '', precision_k = 10, no_lang = False):
+def evaluate(net, split, CNN, config, experiment_log, box_usage = 0, verbose = False, tst_json = [], out_file = '', precision_k = 10):
 
   box_usage = config['box_usage']
   model     = config['model']
@@ -70,10 +70,7 @@ def evaluate(net, split, CNN, config, experiment_log, box_usage = 0, verbose = F
         if node.label == "loc" and loc_count>=2:
           supporting += [phrase_pred[0][0]]
     else:
-      if no_lang:
-        prediction, sub, obj, rel = net([0]*5, box_rep, tree)
-      else:
-        prediction, sub, obj, rel = net([w2i.get(node.label,0) for node in tree.leaves()], box_rep, tree)
+      prediction, sub, obj, rel = net([w2i.get(node.label,0) for node in tree.leaves()], box_rep, tree)
       try:
         _,obj_pred = torch.max(obj.data,0)
         supporting = [obj_pred[0][0]]
@@ -149,9 +146,8 @@ print("="*20)
 start_time = time.time()
 print("startup time for {} model: {:5.3f} for {} parameters".format(config['model'],start_time - start, get_n_params(net)))
 
-best_val , val_rate = evaluate(net, dev, CNN, config, '', verbose = True, no_lang = args.no_lang)
+best_val , val_rate = evaluate(net, dev, CNN, config, '', verbose = True)
 tst_score, tst_rate = evaluate(net, tst, CNN, config, '', verbose = True,
                                tst_json = tst_json,
-                               out_file = out_file,
-                               no_lang = args.no_lang)
+                               out_file = out_file)
 print("model scores based on best validation accuracy\nval_acc:{:5.3f} test_acc: {:5.3f} test speed {:5.1f} inst/sec\n".format(best_val,tst_score,tst_rate))
