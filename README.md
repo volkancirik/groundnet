@@ -1,10 +1,10 @@
 # GroundNet
-Repository for AAAI 2018 paper "Using Syntax for Referring Expression Recognition"
+Repository for AAAI 2018 paper "[Using Syntax for Referring Expression Recognition](https://www.cs.cmu.edu/~vcirik/assets/pdf/AAAI2018_cirik_using.pdf)"
 
 
 ### Preparing Environment:
 
-The code is written in an old version of pytorch. So, first create a virtual environment for your pytorch and other packages like h5py:
+The code is written in an old version of Pytorch. So, first create a virtual environment for your pytorch and other packages like h5py:
 
     conda create -n pytorch0.1.12 python=2.7
     source activate pytorch0.1.12
