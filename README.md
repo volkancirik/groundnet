@@ -1,5 +1,12 @@
 # GroundNet
-Repository for AAAI 2018 paper "[Using Syntax for Referring Expression Recognition](https://www.cs.cmu.edu/~vcirik/assets/pdf/AAAI2018_cirik_using.pdf)"
+Repository for AAAI 2018 paper "[Using Syntax for Referring Expression Recognition](https://www.cs.cmu.edu/~vcirik/assets/pdf/AAAI2018_cirik_using.pdf)".
+
+    @article{cirik2018using,
+	title={Using Syntax to Ground Referring Expressions in Natural Images},
+    author={Cirik, Volkan and Berg-Kirkpatrick, Taylor and Morency, Louis-Philippe},
+    journal = {AAAI},
+    year = {2018}
+    }
 
 
 ### Preparing Environment:
