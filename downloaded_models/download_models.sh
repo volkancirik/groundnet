@@ -1,3 +1,3 @@
 #!/bin/bash
-wget https://www.dropbox.com/s/cu8xfkcv4dnd0vi/models.tar.gz
+wget https://cmu.box.com/shared/static/pjcw8xbjz1ld6gk6dzckral17g3ah08j.gz; mv pjcw8xbjz1ld6gk6dzckral17g3ah08j.gz models.tar.gz
 tar xvfz models.tar.gz
