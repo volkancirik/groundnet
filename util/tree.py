@@ -2,10 +2,13 @@
 from copy import deepcopy
 import re
 
+
 def _tokenize_sexpr(s):
   tokker = re.compile(r" +|[()]|[^ ()]+")
-  toks = [t for t in [match.group(0) for match in tokker.finditer(s)] if t[0] != " "]
+  toks = [t for t in [match.group(0)
+                      for match in tokker.finditer(s)] if t[0] != " "]
   return toks
+
 
 def _within_bracket(toks):
   label = next(toks)
@@ -15,14 +18,17 @@ def _within_bracket(toks):
       children.append(_within_bracket(toks))
     elif tok == ")":
       return Tree(label, children)
-    else: children.append(Tree(tok, None))
-  assert(False),list(toks)
+    else:
+      children.append(Tree(tok, None))
+  assert(False), list(toks)
 
-def returnList(t,mode):
+
+def returnList(t, mode):
   if mode == 2:
-    return [t[0]],[t[1]]
+    return [t[0]], [t[1]]
   else:
     return t
+
 
 class Tree(object):
   def __init__(self, label, children=None):
@@ -36,17 +42,19 @@ class Tree(object):
     return _within_bracket(toks)
 
   def __str__(self):
-    if self.children is None: return self.label
+    if self.children is None:
+      return self.label
     return "[%s %s]" % (self.label, " ".join([str(c) for c in self.children]))
 
-  def isleaf(self): return self.children==None
+  def isleaf(self): return self.children == None
 
   def leaves_iter(self):
     if self.isleaf():
       yield self
     else:
       for c in self.children:
-        for l in c.leaves_iter(): yield l
+        for l in c.leaves_iter():
+          yield l
 
   def leaves(self): return list(self.leaves_iter())
 
@@ -54,11 +62,12 @@ class Tree(object):
     if not self.isleaf():
       yield self
       for c in self.children:
-        for n in c.nonterms_iter(): yield n
+        for n in c.nonterms_iter():
+          yield n
 
   def nonterms(self): return list(self.nonterms_iter())
 
-  def getNonSpan(self, sep = ' '):
+  def getNonSpan(self, sep=' '):
     try:
       r = sep.join([n.label for n in self.nonterms()])
     except:
@@ -66,10 +75,10 @@ class Tree(object):
       pass
     return r
 
-  def getSpan(self, sep = ' ', filtered = False):
+  def getSpan(self, sep=' ', filtered=False):
     if filtered:
       r = '_'.join([n.label for n in self.leaves()])
-      return "_".join(filter(lambda a: a!= '', r.split('_')))
+      return "_".join(filter(lambda a: a != '', r.split('_')))
     try:
       r = sep.join([n.label for n in self.leaves()])
     except:
@@ -79,23 +88,23 @@ class Tree(object):
 
   def getSpin(self):
     if self.isleaf():
-      return [self.label],["S"]
+      return [self.label], ["S"]
 
-    words,parse = [],[]
+    words, parse = [], []
     for ch in self.children:
-      w,p = ch.getSpin()
+      w, p = ch.getSpin()
       words += w
       parse += p
     parse += ["R"]
-    return words,parse
+    return words, parse
 
   def getRaw(self):
     if self.isleaf():
       return self.label
     children = []
     for ch in self.children:
-      children.append( ch.getRaw())
-    return '(' + self.label  + " " + " ".join(children) + ')'
+      children.append(ch.getRaw())
+    return '(' + self.label + " " + " ".join(children) + ')'
 
   def printTree(self):
     print self.getSpan()
@@ -116,7 +125,7 @@ class Tree(object):
         if grch == None:
           continue
 
-        if grch.isleaf() and grch.label in set(['there','is','.','and','that','its','her','his','my','mine','their','hers','us','it']):
+        if grch.isleaf() and grch.label in set(['there', 'is', '.', 'and', 'that', 'its', 'her', 'his', 'my', 'mine', 'their', 'hers', 'us', 'it']):
           to_remove.append(ch)
     for ch in to_remove:
       self.children.remove(ch)
@@ -129,14 +138,14 @@ class Tree(object):
 
     to_remove = []
 
-    for i,ch in enumerate(self.children):
+    for i, ch in enumerate(self.children):
       if ch.label in set(['NP']) and ch.getSpan() == '':
         to_remove.append(ch)
       if ch.children == None:
         continue
-      for j,grch in enumerate(ch.children):
+      for j, grch in enumerate(ch.children):
         if ch.isleaf() == False and grch.isleaf() == False and len(ch.children) == 1:
-          ### adoption of NN --> change self.label = np
+          # adoption of NN --> change self.label = np
           self.children[i] = grch
     for ch in to_remove:
       try:
@@ -144,14 +153,14 @@ class Tree(object):
       except:
         pass
 
-  def preTriplet(self,blacklist):
+  def preTriplet(self, blocklist):
     if self.isleaf() or self.children == None:
       return
 
     for ch in self.children:
       if ch == None:
         continue
-      ch.preTriplet(blacklist)
+      ch.preTriplet(blocklist)
 
     n_child = False
     for ch in self.children:
@@ -162,9 +171,9 @@ class Tree(object):
       for grch in ch.children:
         if grch == None:
           continue
-        if ch.label in set(['NN','NP']) and grch.isleaf() and grch.label in blacklist:
+        if ch.label in set(['NN', 'NP']) and grch.isleaf() and grch.label in blocklist:
           ch.label = 'PP'
-        if ch.label in set(['NN','NP','NNS']) and ((grch.isleaf() and grch.label not in blacklist) or (grch.label in set(['NN','NP','NNS']))) :
+        if ch.label in set(['NN', 'NP', 'NNS']) and ((grch.isleaf() and grch.label not in blocklist) or (grch.label in set(['NN', 'NP', 'NNS']))):
           n_child = True
     if n_child == False and self.label in set(['NP']):
       self.label = 'XP'
@@ -174,14 +183,14 @@ class Tree(object):
       return 1
 
     to_delete = []
-    for i,ch in enumerate(self.children):
+    for i, ch in enumerate(self.children):
       if ch == None:
         continue
       if ch.getSpan(sep='') == child.getSpan(sep='') and str(i) + '_' + path == target_path:
         if direction == 'left':
-          to_delete = [ j for j in xrange(i+1)]
+          to_delete = [j for j in xrange(i+1)]
         elif direction == 'right':
-          to_delete = [ j for j in xrange(i,len(self.children))]
+          to_delete = [j for j in xrange(i, len(self.children))]
     notdeleted = 1
 
     for ch in to_delete:
@@ -191,54 +200,55 @@ class Tree(object):
       return notdeleted
 
     index = -1
-    for i,ch in enumerate(self.children):
+    for i, ch in enumerate(self.children):
       if ch == None:
         continue
-      chnotdeleted = ch.deleteNode(child,target_path,str(i) + '_' + path,direction)
+      chnotdeleted = ch.deleteNode(
+          child, target_path, str(i) + '_' + path, direction)
       if chnotdeleted == 0:
         index = i
         break
 
     if index != -1:
       if direction == 'left':
-        to_delete = [ j for j in xrange(index)]
+        to_delete = [j for j in xrange(index)]
       if direction == 'right':
-        to_delete = [ j for j in xrange(index+1,len(self.children))]
+        to_delete = [j for j in xrange(index+1, len(self.children))]
       for ch in to_delete:
         self.children[ch] = Tree('')
         notdeleted = 0
     return notdeleted
 
-  def clean4rel(self,blacklist):
+  def clean4rel(self, blocklist):
     if self.isleaf() or self.children == None:
       return
     for ch in self.children:
       if ch != None:
-        ch.clean4rel(blacklist)
-      if (ch.isleaf() and self.label not in set(['RB','JJ','JJS','PP','VBG','IN','VBZ','VB','ADJP','XP']) and ch.label not in blacklist) or ch.label in set(['being','is','show','was','are','that','s','very','be','like','who','whom','whose']):
+        ch.clean4rel(blocklist)
+      if (ch.isleaf() and self.label not in set(['RB', 'JJ', 'JJS', 'PP', 'VBG', 'IN', 'VBZ', 'VB', 'ADJP', 'XP']) and ch.label not in blocklist) or ch.label in set(['being', 'is', 'show', 'was', 'are', 'that', 's', 'very', 'be', 'like', 'who', 'whom', 'whose']):
         ch.label = ''
 
-  def firstNP(self,path,blacklist):
+  def firstNP(self, path, blocklist):
     if self.isleaf() or self.children == None:
-      return None,''
+      return None, ''
 
-    if self.label in set(['NN','NNS','NP']) and not(self.children[0] != None and self.children[0].label in blacklist):
-#    if self.label in set(['NP']) and not(self.children[0] != None and self.children[0].label in blacklist):
-      return self,path
+    if self.label in set(['NN', 'NNS', 'NP']) and not(self.children[0] != None and self.children[0].label in blocklist):
+      #    if self.label in set(['NP']) and not(self.children[0] != None and self.children[0].label in blocklist):
+      return self, path
 
-    best_f, best_p = None,''
-    for i,ch in enumerate(self.children):
+    best_f, best_p = None, ''
+    for i, ch in enumerate(self.children):
       if ch == None:
         continue
-      found,fpath = ch.firstNP(path+'_'+str(i), blacklist)
-      if best_p == '' or (len(fpath)<len(best_p) and fpath != ''):
+      found, fpath = ch.firstNP(path+'_'+str(i), blocklist)
+      if best_p == '' or (len(fpath) < len(best_p) and fpath != ''):
         best_f = found
         best_p = fpath
-    return best_f,best_p
+    return best_f, best_p
 
   def checkTree(self):
     out = 1
-    if self.getSpan(filtered = True) == '':
+    if self.getSpan(filtered=True) == '':
       out = 0
 
     if self.children == None:
@@ -253,14 +263,14 @@ class Tree(object):
       out *= ch.checkTree()
     return out
 
-  def findTriplet(self,blacklist, mode = 1, verbose = False, depth = 0):
+  def findTriplet(self, blocklist, mode=1, verbose=False, depth=0):
     '''
     mode 0 : depth-1 triplet
     mode 1 : depth-n triplet
     mode 2 : depth-n triplet with candidate fix for parse tree
     '''
     if self.children == None or len(self.children) == 1 or len(self.leaves()) <= 2 or self.children[0] == None or self.children[1] == None:
-      return returnList((1,"(loc "+ "_".join(self.getSpan(filtered = True).split('_')) +")"),mode)
+      return returnList((1, "(loc " + "_".join(self.getSpan(filtered=True).split('_')) + ")"), mode)
     if self.children != None:
       ch_labels = set()
       for ch in self.children:
@@ -277,7 +287,7 @@ class Tree(object):
       ii += 1
       if ch == None:
         continue
-      l, lpath = ch.firstNP('_'+str(ii),blacklist)
+      l, lpath = ch.firstNP('_'+str(ii),blocklist)
       if l != None:
         lidx = ii
         break
@@ -287,14 +297,14 @@ class Tree(object):
       ii += 1
       if ch == None:
         continue
-      r, rpath = ch.firstNP('_'+str(ii),blacklist)
+      r, rpath = ch.firstNP('_'+str(ii),blocklist)
       if r != None:
         ridx = ii
         break
 
 
-#    l,lpath = self.children[0].firstNP('_0',blacklist)
-#    r,rpath = self.children[1].firstNP('_1',blacklist)
+#    l,lpath = self.children[0].firstNP('_0',blocklist)
+#    r,rpath = self.children[1].firstNP('_1',blocklist)
 
     l = deepcopy(l)
     r = deepcopy(r)
@@ -302,9 +312,9 @@ class Tree(object):
     if l == None:
       return returnList((1,"(loc "+self.getSpan(filtered = True)+")"),mode)
     if r == None and l != None:
-      dl,l3 = deepcopy(l).findTriplet(blacklist, mode, verbose, depth = depth+1)
+      dl,l3 = deepcopy(l).findTriplet(blocklist, mode, verbose, depth = depth+1)
       # if len(lpath) == 2:
-      #   dl,l3 = deepcopy(self.children[lidx]).findTriplet(blacklist, mode, verbose, depth = depth+1)
+      #   dl,l3 = deepcopy(self.children[lidx]).findTriplet(blocklist, mode, verbose, depth = depth+1)
       # else:
       #   dl,l3 = returnList((1,"(loc "+ "_".join(l.getSpan(filtered = True).split('_')) +")"),mode)
 
@@ -312,7 +322,7 @@ class Tree(object):
         self.deleteNode(l,lpath[::-1],'','')
       else:
         self.deleteNode(l,lpath[::-1],'','right')
-      self.clean4rel(blacklist)
+      self.clean4rel(blocklist)
       rel = self.getSpan(filtered = True)
       if rel == '':
         return dl,l3
@@ -340,9 +350,9 @@ class Tree(object):
       dl,l3 = 1,l.getSpan(filtered = True)
       dr,r3 = 1,r.getSpan(filtered = True)
     else:
-      dl,l3  = deepcopy(l).findTriplet(blacklist,mode,verbose, depth = depth+1)
-      dr,r3  = deepcopy(r).findTriplet(blacklist,mode,verbose, depth = depth+1)
-    self.clean4rel(blacklist)
+      dl,l3  = deepcopy(l).findTriplet(blocklist,mode,verbose, depth = depth+1)
+      dr,r3  = deepcopy(r).findTriplet(blocklist,mode,verbose, depth = depth+1)
+    self.clean4rel(blocklist)
     rel = self.getSpan(filtered = True)
 
     if mode == 2:
