@@ -17,3 +17,6 @@ wget https://cmu.box.com/shared/static/ilffctq60n3p1grq7579ktr1gbyq2b6i.pkl;mv i
 wget https://cmu.box.com/shared/static/ajaoiwa2dtytxffsss85yv4m81getent.pkl;mv ajaoiwa2dtytxffsss85yv4m81getent.pkl stanford_cmn_refcocog_iou05_umd.NOtriplets.pkl
 
 wget https://cmu.box.com/shared/static/4ci9lkcc0fqmvxhrfiz9bvg1yxzhd51v.glove;mv 4ci9lkcc0fqmvxhrfiz9bvg1yxzhd51v.glove wordvec.glove
+
+wget https://cmu.box.com/shared/static/yd2qwkzkzs8tpdk6v0d7lvo2cvgln7tf.npy; mv yd2qwkzkzs8tpdk6v0d7lvo2cvgln7tf.npy refcocog.trn.npy
+wget https://cmu.box.com/shared/static/v3nom6jw63z7padz7fgxmvofnz3pvckv.npy; mv v3nom6jw63z7padz7fgxmvofnz3pvckv.npy refcocog.val.npy
