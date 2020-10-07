@@ -1,3 +1,3 @@
 #!/bin/bash
-wget https://www.dropbox.com/s/g6tygbvrd6tq4ye/stanford_parser.tar.gz
+wget https://cmu.box.com/shared/static/we4f8h9rh733zoof9t2ri1mya0r5dmf8.gz;mv we4f8h9rh733zoof9t2ri1mya0r5dmf8.gz stanford_parser.tar.gz
 tar xvfz stanford_parser.tar.gz
