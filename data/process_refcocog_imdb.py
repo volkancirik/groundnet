@@ -16,8 +16,8 @@ import sys
 usage = '''
 usage:
       python 
-      $> python process_refcocog_imdb.py --data-root ./data --save stanford_cmn_refcocog_iou05.refcocog.NOtriplets.pkl
-      $> python process_refcocog_imdb.py --data-root ./data --save stanford_cmn_refcocog_iou05.refcocog.NOtriplets.pkl --use-triplers
+      $> PYTHONPATH=.. python process_refcocog_imdb.py --data-root ./ --save stanford_cmn_refcocog_iou05.refcocog.NOtriplets.pkl
+      $> PYTHONPATH-.. python process_refcocog_imdb.py --data-root ./ --save stanford_cmn_refcocog_iou05.refcocog.triplets.pkl --use-triplers
 '''
 __author__ = "volkan cirik"
 
